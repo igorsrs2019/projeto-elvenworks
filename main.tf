@@ -4,6 +4,11 @@ module "infrastructure" {
 
 }
 
+module "ec2" {
+  source = "./modules/ec2"
+
+}
+
 terraform {
   required_providers {
     aws = {

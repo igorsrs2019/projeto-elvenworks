@@ -207,3 +207,25 @@ resource "aws_route_table_association" "privada2" {
     route_table_id = aws_route_table.privada2.id
   
 }
+
+data "aws_key_pair" "key_linux" {
+  key_name           = "linux"
+  include_public_key = true
+
+  filter {
+    name   = "tag:Component"
+    values = ["key_linux"]
+  }
+}
+
+output "fingerprint" {
+  value = data.aws_key_pair.key_linux.fingerprint
+}
+
+output "name" {
+  value = data.aws_key_pair.key_linux.key_name
+}
+
+output "id" {
+  value = data.aws_key_pair.key_linux.id
+}
