@@ -1,24 +1,30 @@
+
+module "infrastructure" {
+  source = "./modules/infrastructure"
+
+}
+
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "5.53.0"
     }
   }
 }
 
 provider "aws" {
-  region = var.region
+  region  = var.region
   profile = var.aws_profile
 }
 
-terraform { 
- backend "s3" {
-  bucket = "tf-state-projeto-elvenworks"
-  key = "terraform/terraform.tfstate"
-  #encrypt = true
-  region = "us-east-1"
+terraform {
+  backend "s3" {
+    bucket  = "tf-state-projeto-elvenworks"
+    key     = "terraform/terraform.tfstate"
+    encrypt = true
+    region  = "us-east-1"
 
-}
+  }
 }
 

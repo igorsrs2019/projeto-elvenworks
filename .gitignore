@@ -5,3 +5,6 @@ terraform.tfstate
 terraform.tfstate.backup 
 variables.tf 
 files
+plan.txt
+.gitignore
+.terraform.lock.hcl
