@@ -47,6 +47,7 @@ depends_on = [aws_vpc.vpc_projeto]
     
 }
 
+
 resource "aws_subnet" "subnet-privada2" {
     vpc_id = aws_vpc.vpc_projeto.id
     cidr_block = var.subnet_privada2_cidr
@@ -58,6 +59,7 @@ resource "aws_subnet" "subnet-privada2" {
 depends_on = [aws_vpc.vpc_projeto]
     
 }
+
 
 // Criacao do Internet Gateway
 
@@ -208,24 +210,18 @@ resource "aws_route_table_association" "privada2" {
   
 }
 
-data "aws_key_pair" "key_linux" {
-  key_name           = "linux"
-  include_public_key = true
-
-  filter {
-    name   = "tag:Component"
-    values = ["key_linux"]
+// Criacao keypair
+resource "aws_key_pair" "key_linux" {
+  key_name   = "key_linux"
+  public_key = tls_private_key.rsa-4096.public_key_openssh
+  
   }
+resource "tls_private_key" "rsa-4096" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
-output "fingerprint" {
-  value = data.aws_key_pair.key_linux.fingerprint
-}
-
-output "name" {
-  value = data.aws_key_pair.key_linux.key_name
-}
-
-output "id" {
-  value = data.aws_key_pair.key_linux.id
+resource "local_file" "key_linux_private" {
+  content  = tls_private_key.rsa-4096.private_key_pem
+  filename = "modules/infrastructure/key_linux_private"
 }

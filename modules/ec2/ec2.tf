@@ -2,11 +2,11 @@
 resource "aws_instance" "ec2" {
   ami                     = "ami-08a0d1e16fc3f61ea"
   instance_type           = "t2.micro"
-  subnet_id = data.aws_subnet.subnet-privada1.id
-  vpc_security_group_ids = data.aws_security_group.id
-  key_name = data.aws_key_pair.key_linux.key_name
+  subnet_id = aws_subnet.subnet-privada1.id
+  vpc_security_group_ids = aws_security_group.subnet_privada1_name.id
+  key_name = data.output.name_key_pair.name
   
-  depends_on = [aws_key_pair.key_linux]
+  depends_on = [aws_key_pair.key_linux, aws_vpc.vpc_projeto ]
 }
 
 resource "aws_security_group" "sg_projeto" {
@@ -43,6 +43,12 @@ resource "aws_vpc_security_group_ingress_rule" "allow_80" {
   to_port           = 80
 }
 
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
+  security_group_id = aws_security_group.allow_tls.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1" # semantically equivalent to all ports
+}
+
 /*resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv6" {
   security_group_id = aws_security_group.allow_tls.id
   cidr_ipv6         = aws_vpc.main.ipv6_cidr_block
@@ -51,11 +57,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_80" {
   to_port           = 443
 }*/
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}
+
 
 /*resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
   security_group_id = aws_security_group.allow_tls.id

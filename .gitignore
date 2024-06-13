@@ -8,3 +8,4 @@ files
 plan.txt
 .gitignore
 .terraform.lock.hcl
+key_linux_private
