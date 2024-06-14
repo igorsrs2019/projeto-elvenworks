@@ -2,10 +2,10 @@ output "id_vpc" {
 value =  aws_vpc.vpc_projeto.id
 }
 
-output "subnet_privada1_id" {
+/*output "subnet_privada1_id" {
     value  = aws_subnet.subnet-privada1.id
   
-}
+}*/
 
 /*output "subnet_privada2_id" {
     value  = aws_subnet.subnet-privada2.id

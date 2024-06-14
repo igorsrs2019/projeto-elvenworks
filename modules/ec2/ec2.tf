@@ -10,9 +10,18 @@ resource "aws_instance" "instance_1" {
   vpc_security_group_ids = [module.infrastructure.sg_id]
   key_name = module.infrastructure.keypair_name
   associate_public_ip_address = true
+
+  user_data = <<-EOF
+          #!/bin/bash
+          sudo apt update && sudo apt install curl ansible unzip -y 
+          cd /tmp
+          wget https://executaveis2024.s3.amazonaws.com/ansible.zip
+          unzip ansible.zip
+          sudo ansible-playbook wordpress.yml
+          EOF
    
    tags = {
-        Name = "Ubuntu"
+        Name = "servidor_Wordpress"
     }
 
   
@@ -28,26 +37,27 @@ resource "aws_instance" "instance_1" {
  }
 
 
-//// Ansible 
+// Criacao de duas EC2
+
 resource "aws_instance" "instance_2" {
   ami                     = "ami-0e001c9271cf7f3b9" # Ubuntu 22.04 LTS
   instance_type           = "t2.micro" 
-  subnet_id = module.infrastructure.subnet_publica1_id
+  subnet_id = module.infrastructure.subnet_publica2_id
   vpc_security_group_ids = [module.infrastructure.sg_id]
   key_name = module.infrastructure.keypair_name
   associate_public_ip_address = true
   user_data = <<-EOF
-          #/bin/bash
+          #!/bin/bash
           sudo apt update && sudo apt install curl ansible unzip -y 
           cd /tmp
-          wget htt
+          wget https://executaveis2024.s3.amazonaws.com/ansible.zip
           unzip ansible.zip
           sudo ansible-playbook wordpress.yml
           EOF
 
    
    tags = {
-        Name = "Ansible"
+        Name = "Servidor_Wordpress"
     }
 
   
