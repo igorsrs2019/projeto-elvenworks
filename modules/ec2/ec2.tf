@@ -1,66 +1,63 @@
+module "infrastructure" {
+  source = "../infrastructure"
 
-resource "aws_instance" "ec2" {
-  ami                     = "ami-08a0d1e16fc3f61ea"
-  instance_type           = "t2.micro"
-  subnet_id = aws_subnet.subnet-privada1.id
-  vpc_security_group_ids = aws_security_group.subnet_privada1_name.id
-  key_name = data.output.name_key_pair.name
+}
+
+resource "aws_instance" "instance_1" {
+  ami                     = "ami-0e001c9271cf7f3b9" # Ubuntu 22.04 LTS
+  instance_type           = "t2.micro" 
+  subnet_id = module.infrastructure.subnet_publica1_id
+  vpc_security_group_ids = [module.infrastructure.sg_id]
+  key_name = module.infrastructure.keypair_name
+  associate_public_ip_address = true
+   
+   tags = {
+        Name = "Ubuntu"
+    }
+
   
-  depends_on = [aws_key_pair.key_linux, aws_vpc.vpc_projeto ]
+  depends_on = [module.infrastructure]
 }
 
-resource "aws_security_group" "sg_projeto" {
-  name        = "allow_tls"
-  description = "Allow TLS inbound traffic and all outbound traffic"
-  vpc_id      = vpc_name.vpc_projeto.id
+  output "instance_1_name" {
+  value = aws_instance.instance_1.tags
+ }
 
-  tags = {
-    Name = "allow_tls"
-  }
+  output "instance_1_ip" {
+  value = aws_instance.instance_1.public_ip
+ }
+
+
+//// Ansible 
+resource "aws_instance" "instance_2" {
+  ami                     = "ami-0e001c9271cf7f3b9" # Ubuntu 22.04 LTS
+  instance_type           = "t2.micro" 
+  subnet_id = module.infrastructure.subnet_publica1_id
+  vpc_security_group_ids = [module.infrastructure.sg_id]
+  key_name = module.infrastructure.keypair_name
+  associate_public_ip_address = true
+  user_data = <<-EOF
+          #/bin/bash
+          sudo apt update && sudo apt install curl ansible unzip -y 
+          cd /tmp
+          wget htt
+          unzip ansible.zip
+          sudo ansible-playbook wordpress.yml
+          EOF
+
+   
+   tags = {
+        Name = "Ansible"
+    }
+
+  
+  depends_on = [module.infrastructure]
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_443" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = vpc_name.vpc_projeto.id
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}
+ output "instance_2_ip" {
+  value = aws_instance.instance_1.public_ip
+ }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_22" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = vpc_name.vpc_projeto.id
-  from_port         = 22
-  ip_protocol       = "tcp"
-  to_port           = 22
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_80" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = vpc_name.vpc_projeto.id
-  from_port         = 80
-  ip_protocol       = "tcp"
-  to_port           = 80
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}
-
-/*resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv6" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv6         = aws_vpc.main.ipv6_cidr_block
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}*/
-
-
-
-/*resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv6         = "::/0"
-  ip_protocol       = "-1" # semantically equivalent to all ports
-}*/
+ output "instance_2_name" {
+  value = aws_instance.instance_2.tags
+ }
