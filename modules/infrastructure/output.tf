@@ -6,15 +6,7 @@ output "securit_group_id" {
 value = aws_security_group.sg_projeto.id
 } 
 
-/*output "subnet_publica1_id" {
-    value  = aws_subnet.subnet-publica1.id
 
-}
-
-output "subnet_publica2_id" {
-    value  = aws_subnet.subnet-publica2.id
-  
-}*/
 output "subnet_privada1_id" {
     value  = aws_subnet.subnet-privada1.id
   
