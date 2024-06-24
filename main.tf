@@ -1,7 +1,16 @@
 
-module "ec2" {
-  source = "./modules/ec2"
+module "infrastructure" {
+  source = "./modules/infrastructure"
+}
 
+
+
+module "ec2" {
+  source                   = "./modules/ec2"
+  infra-subnet_privada1_id = module.infrastructure.subnet_privada1_id
+  infra-subnet_privada2_id = module.infrastructure.subnet_privada2_id
+  infra-sg_id              = module.infrastructure.securit_group_id
+  infra-keypair_name       = module.infrastructure.keypair_name
 }
 
 terraform {
@@ -26,5 +35,10 @@ terraform {
     region  = "us-east-1"
 
   }
+
 }
+
+
+
+
 

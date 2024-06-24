@@ -18,7 +18,7 @@ resource "aws_vpc" "vpc_projeto" {
 resource "aws_subnet" "subnet-publica1" {
     vpc_id = aws_vpc.vpc_projeto.id
     cidr_block = var.subnet_publica1_cidr
-    availability_zone = var.subnet_region-a
+    availability_zone = var.subnet_az-a
     tags = {
     Name = var.subnet_publica1_name,
     Terraformed = "true"    
@@ -30,7 +30,7 @@ resource "aws_subnet" "subnet-publica1" {
 resource "aws_subnet" "subnet-publica2" {
     vpc_id = aws_vpc.vpc_projeto.id
     cidr_block = var.subnet_publica2_cidr
-    availability_zone = var.subnet_region-b
+    availability_zone = var.subnet_az-b
     tags = {
     Name = var.subnet_publica2_name,
     Terraformed = "true"    
@@ -39,30 +39,30 @@ resource "aws_subnet" "subnet-publica2" {
     depends_on = [aws_vpc.vpc_projeto]
 }
 
-/*resource "aws_subnet" "subnet-privada1" {
+resource "aws_subnet" "subnet-privada1" {
     vpc_id = aws_vpc.vpc_projeto.id
     cidr_block = var.subnet_privada1_cidr
-    availability_zone = var.subnet_region-c
+    availability_zone = var.subnet_az-c
     tags = {
     Name = var.subnet_privada1_name,
     Terraformed = "true"    
   }
 depends_on = [aws_vpc.vpc_projeto]
     
-}*/
+}
 
 
-/*resource "aws_subnet" "subnet-privada2" {
+resource "aws_subnet" "subnet-privada2" {
     vpc_id = aws_vpc.vpc_projeto.id
     cidr_block = var.subnet_privada2_cidr
-    availability_zone = var.subnet_region-d
+    availability_zone = var.subnet_az-d
     tags = {
     Name = var.subnet_privada2_name,
     Terraformed = "true"    
   }
 depends_on = [aws_vpc.vpc_projeto]
     
-}*/
+}
 
 
 // Criacao do Internet Gateway
@@ -78,9 +78,9 @@ resource "aws_internet_gateway" "internet-gw" {
   
 }
 
-//Criacao de EIPS
+// Criacao de EIPS
 
-/*resource "aws_eip" "eip_nat_gw_1" {
+resource "aws_eip" "eip_nat_gw_1" {
 domain = "vpc"
    tags = {
     Terraformed = "true"
@@ -89,9 +89,9 @@ domain = "vpc"
    }
      depends_on = [aws_vpc.vpc_projeto, aws_internet_gateway.internet-gw]
 
-}*/
+}
 
-/*resource "aws_eip" "eip_nat_gw_2" {
+resource "aws_eip" "eip_nat_gw_2" {
 domain = "vpc"
    tags = {
     Terraformed = "true"
@@ -100,10 +100,10 @@ domain = "vpc"
    }
    depends_on = [aws_vpc.vpc_projeto, aws_internet_gateway.internet-gw]
 
-}*/
+}
 
 // Criacao dos Nats Gateways
-/*
+
 resource "aws_nat_gateway" "nat-gateway-1" {
   allocation_id = aws_eip.eip_nat_gw_1.id
   subnet_id     = aws_subnet.subnet-publica1.id
@@ -113,9 +113,9 @@ resource "aws_nat_gateway" "nat-gateway-1" {
   }
 
   depends_on = [aws_vpc.vpc_projeto, aws_internet_gateway.internet-gw, aws_eip.eip_nat_gw_1]
-}*/
+}
 
-/*resource "aws_nat_gateway" "nat-gateway-2" {
+resource "aws_nat_gateway" "nat-gateway-2" {
   allocation_id = aws_eip.eip_nat_gw_2.id
   subnet_id     = aws_subnet.subnet-publica2.id
 
@@ -124,7 +124,7 @@ resource "aws_nat_gateway" "nat-gateway-1" {
   }
 
   depends_on = [aws_vpc.vpc_projeto, aws_internet_gateway.internet-gw, aws_eip.eip_nat_gw_2]
-}*/
+}
 
 
 
@@ -145,7 +145,7 @@ depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto]
 
 }
   
-  /*resource "aws_route_table" "publica2"{
+  resource "aws_route_table" "publica2"{
     vpc_id = aws_vpc.vpc_projeto.id
     route {
         cidr_block = "0.0.0.0/0"
@@ -158,9 +158,9 @@ depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto]
 
 
     depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto]
-}*/
+}
 
-/*resource "aws_route_table" "privada1"{
+resource "aws_route_table" "privada1"{
     vpc_id = aws_vpc.vpc_projeto.id
     route {
         cidr_block = "0.0.0.0/0"
@@ -172,9 +172,9 @@ depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto]
     }
 
     depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto, aws_nat_gateway.nat-gateway-1]
-}*/
+}
 
-/*resource "aws_route_table" "privada2"{
+resource "aws_route_table" "privada2"{
     vpc_id = aws_vpc.vpc_projeto.id
     route {
         cidr_block = "0.0.0.0/0"
@@ -185,7 +185,7 @@ depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto]
         Name = "rtb-privada2"
     }
     depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto, aws_nat_gateway.nat-gateway-2]
-}*/
+}
 
 // Criar as associacoes entre as tabelas de roteamento e as subnets 
 
@@ -197,28 +197,28 @@ depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto]
 
 }
 
-/*resource "aws_route_table_association" "publica2" {
+resource "aws_route_table_association" "publica2" {
     subnet_id = aws_subnet.subnet-publica2.id
     route_table_id = aws_route_table.publica2.id
   
-}*/
+}
 
 
-/*resource "aws_route_table_association" "privada1" {
+resource "aws_route_table_association" "privada1" {
     subnet_id = aws_subnet.subnet-privada1.id
     route_table_id = aws_route_table.privada1.id
 
  depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto, ]
 
-}*/
+}
 
-/*resource "aws_route_table_association" "privada2" {
+resource "aws_route_table_association" "privada2" {
     subnet_id = aws_subnet.subnet-privada2.id
     route_table_id = aws_route_table.privada2.id
   
 
   depends_on = [aws_internet_gateway.internet-gw, aws_vpc.vpc_projeto]
-}*/
+}
 
 // Criacao de keypair a chave privada fica no  diretorio "modules/infrastructure/key_linux_private"
 resource "aws_key_pair" "key_linux" {
@@ -276,35 +276,6 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
   security_group_id = aws_security_group.sg_projeto.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1" # semantically equivalent to all ports
-}
-
-
-// Criacao do Application Load Balance 
-resource "aws_lb" "alb_wp" {
-  name               = "lbwordpress"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.sg_projeto.id]
-  subnets            = [aws_subnet.subnet-publica1, aws_subnet.subnet-publica2]
-
-  enable_deletion_protection = true
-
-
-  tags = {
-    Environment = "production"
-  }
-
-  
-}
-
-resource "aws_lb_target_group_attachment" "tg_alb_wp" {
-  target_group_arn = aws_lb.alb_wp.arn
-  target_id        = aws_lb_target_group.tg_alb.id
-  port             = 80
-}
-
-resource "aws_lb_target_group" "tg_alb" {
-  
 }
 
 
